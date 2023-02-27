@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const { UserAccount } = require('../models/userAccount');
 const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
 
 const router = Router();
 
@@ -43,12 +44,27 @@ router.get("/users/login", async (req, res) => {
   });
  }
 
- const token = uuidv4();
+ if (user.password !== password) {
+  return res.status(401).send({
+   message: 'Login or password is invalid'
+  });
+ }
 
- await UserAccount.findOneAndUpdate(
-  { login, password },
-  { $push: { tokens: token } }
- );
+ const jwtPayload = {
+  _id: user._id,
+  login: user.login
+ };
+
+ const token = jwt.sign(
+  jwtPayload,
+  // https://www.grc.com/passwords.htm
+  process.env.JWT_TOKEN,
+  { expiresIn: process.env.JWT_EXPIRES_IN_HOURS * 60 * 60 });
+
+ // await UserAccount.findOneAndUpdate(
+ //  { login, password },
+ //  { $push: { tokens: token } }
+ // );
 
  res.status(200).send({ token });
 });
