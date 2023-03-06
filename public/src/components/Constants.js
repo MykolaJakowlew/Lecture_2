@@ -1,6 +1,6 @@
 // list of all the constants
 const Constants = () => {
-  const url = "http://localhost:8080/services"
+  const url = "https://02c1-194-44-221-10.ngrok.io/services"
   return {
     // all the URLs
     url,
