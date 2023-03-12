@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "cd public/ && npm run build",
-    "start": "node server/index.js"
+    "start:long-polling": "node server/long-polling.js"
   },
   "author": "",
   "license": "ISC",

@@ -1,50 +1,76 @@
-import { useState } from "react"
-
-// components
-import Header from "./components/layout/Header"
-import Content from "./components/Content"
-import Footer from "./components/layout/Footer"
-import Login from "./components/login/Login"
-
-// css
-import "./css/style.css"
+import { useEffect, useState } from "react";
+import axios from 'axios';
+import './style.css';
 
 const App = () => {
-  // Initialize the initial state and its modifier function
-  const [appData, setAppData] = useState({
-    showContent: false,
-    showBackButton: false,
-  })
+  const [userName, setUserName] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [value, setValue] = useState("");
+  const [showLogin, setShowLogin] = useState(true);
 
-  // toggle the message panel
-  const toggleBackButton = (showBackButton) => {
-    setAppData({ ...appData, showBackButton })
-  }
 
-  const onSuccessLogin = (userInfo) => {
-    setAppData({ ...appData, userInfo, showContent: true })
-  }
+  const selectUserName = () => {
+    if (!userName) {
+      return;
+    }
+    localStorage.setItem('userName', userName);
+    setShowLogin(false);
+  };
+  const subscribe = async () => {
+    try {
+      const { data } = await axios.get('/messages');
+      setMessages((prev) => {
+        return [...prev, data.message];
+      });
+      subscribe();
+    } catch (err) {
+      console.error(err);
+      setTimeout(() => subscribe(), 500);
+    }
+  };
+  useEffect(() => {
+    const userName = localStorage.getItem('userName');
+    setUserName(userName);
+    setShowLogin(userName ? false : true);
+    subscribe();
+  }, []);
 
-  const { showContent, userInfo, showBackButton } = appData
+  const sendMessage = async () => {
+    await axios.post('/messages', {
+      userName,
+      text: value,
+      date: Date.now()
+    });
+  };
+
   return (
-    <div className="container">
-      {/* including the Title and other components */}
-      <Header userInfo={userInfo} />
-      {showContent == false ? (
-        <Login onSuccessLogin={onSuccessLogin} />
-      ) : (
-        <Content
-          userInfo={userInfo}
-          showBackButton={showBackButton}
-          toggleBackButton={toggleBackButton}
-        />
-      )}
-      <Footer
-        showBackButton={showBackButton}
-        toggleBackButton={toggleBackButton}
-      />
-    </div>
-  )
-}
+    <>
+      <div className="login" style={{ display: showLogin ? 'flex' : 'none' }}>
+        <input
+          type="text"
+          value={userName}
+          onChange={e => setUserName(e.target.value)} />
+        <button onClick={selectUserName}>Set name</button>
+      </div><div className="container">
+        <div className="form">
+          <input
+            type="text"
+            value={value}
+            onChange={e => setValue(e.target.value)} />
+          <button onClick={sendMessage}>Send message</button>
+        </div>
+        <div className="messages">
+          {messages.map(message => <div>
+            <div>
+              <b>{message.userName}</b><br />
+              <b style={{ fontSize: '10px' }}>{new Date(message.date).toISOString()}</b>
+            </div>
+            <div>{message.text}</div>
+          </div>)}
+        </div>
+      </div>
+    </>
+  );
+};
 
-export default App
+export default App;
