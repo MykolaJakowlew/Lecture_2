@@ -1,5 +1,15 @@
+const webpack = require('webpack');
+const path = require('path');
+const dotenv = require('dotenv');
+dotenv.config({ path: path.join(__dirname, '../.env') });
 module.exports = {
   devtool: "source-map",
+  plugins: [
+    new webpack.DefinePlugin({
+      process: { env: { BASE_URL: `"${process.env.BASE_URL}"` } }
+
+    })
+  ],
   module: {
     rules: [
       {
