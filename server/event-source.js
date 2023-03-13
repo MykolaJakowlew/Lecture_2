@@ -1,13 +1,14 @@
 const express = require('express');
-const cors = require("cors");
+const bodyParser = require('body-parser');
+const cors = require('cors');
 const events = require('events');
 const path = require('path');
-const bodyParser = require('body-parser');
 
 const PORT = 8000;
-const app = express();
+
 const emitter = new events.EventEmitter();
 
+const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -22,15 +23,19 @@ app.get('/connect', (req, res) => {
    'Cache-Control': 'no-cache'
   }
  );
+
  emitter.on('new-message', (message) => {
-  res.write('data: ' + JSON.stringify(message) + ' \n\n');
+  // res.status(200).send(message);
+  console.log('message:', message);
+  res.write(`data: ${JSON.stringify(message)} \n\n`);
  });
 });
 
 app.post('/messages', (req, res) => {
  const message = req.body;
+ console.log('message:', message);
  emitter.emit('new-message', message);
  return res.status(200).send();
 });
 
-app.listen(PORT, () => console.log(`Server was started on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server was started on ${PORT}`));
