@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import './style.css';
+import { v4 as uuid } from 'uuid';
 
 const LongPollingChat = () => {
  const [userName, setUserName] = useState('');
@@ -8,14 +9,21 @@ const LongPollingChat = () => {
  const [value, setValue] = useState("");
  const [showLogin, setShowLogin] = useState(true);
 
+ const id = uuid();
 
- const selectUserName = () => {
-  if (!userName) {
-   return;
+ const subscribeOnAuth = async () => {
+  try {
+   const { data } = await axios.get(`/login?id=${id}`);
+   const name = `${data.firstName} ${data.lastName}`;
+   setUserName(name);
+   localStorage.setItem('userName', name);
+   setShowLogin(false);
+  } catch (err) {
+   console.error(err);
+   subscribeOnAuth();
   }
-  localStorage.setItem('userName', userName);
-  setShowLogin(false);
  };
+
  const subscribe = async () => {
   try {
    const { data } = await axios.get('/messages');
@@ -30,9 +38,14 @@ const LongPollingChat = () => {
  };
  useEffect(() => {
   const userName = localStorage.getItem('userName');
-  setUserName(userName);
-  setShowLogin(userName ? false : true);
-  subscribe();
+  if (userName) {
+   setUserName(userName);
+   setShowLogin(false);
+   subscribe();
+  } else {
+   subscribeOnAuth()
+    .then(() => subscribe());
+  }
  }, []);
 
  const sendMessage = async () => {
@@ -46,12 +59,9 @@ const LongPollingChat = () => {
  return (
   <>
    <div className="login" style={{ display: showLogin ? 'flex' : 'none' }}>
-    <input
-     type="text"
-     value={userName}
-     onChange={e => setUserName(e.target.value)} />
-    <button onClick={selectUserName}>Set name</button>
-   </div><div className="container">
+    <input type="text" value={id} readOnly />
+   </div>
+   <div className="container">
     <div className="form">
      <input
       type="text"

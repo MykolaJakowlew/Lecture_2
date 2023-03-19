@@ -6,7 +6,12 @@ module.exports = {
   devtool: "source-map",
   plugins: [
     new webpack.DefinePlugin({
-      process: { env: { BASE_URL: `"${process.env.BASE_URL}"` } }
+      process: {
+        env: {
+          BASE_URL: `"${process.env.BASE_URL}"`,
+          SOCKET_BASE_URL: `"${process.env.SOCKET_BASE_URL}"`,
+        }
+      }
 
     })
   ],
