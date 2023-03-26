@@ -35,13 +35,13 @@ const WebSocketChat = () => {
       console.log(`WebSocket connection was created with:${SOCKET_BASE_URL}`);
       setConnected(true);
     };
-    socket.current.onclose = () => {
-      console.log(`WebSocket connection was closed`);
+    socket.current.onclose = (event) => {
+      console.log(`WebSocket connection was closed`, event);
       setConnected(false);
-      setTimeout(() => {
-        console.log(`WebSocket connection retried`);
-        subscribe();
-      }, 1000);
+      // setTimeout(() => {
+      //   console.log(`WebSocket connection retried`);
+      //   subscribe();
+      // }, 1000);
     };
     socket.current.onerror = (error) => {
       console.log(`WebSocket connection has error`, error);

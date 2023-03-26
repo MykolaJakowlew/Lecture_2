@@ -1,6 +1,5 @@
 const { Telegraf } = require('telegraf');
-console.debug(process.env.TELEGRAM_BOT_TOKEN);
-console.debug(process.env.BASE_URL);
+
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
 module.exports = async (app, emitter) => {
@@ -15,7 +14,7 @@ module.exports = async (app, emitter) => {
  bot.command('login', (ctx) => {
   const [command, id] = ctx.message.text.split(' ');
   const eventName = `login-${id}`;
-  console.log(`Try to login id:${id} event:<${eventName}>`);
+  console.log(`Try to login id:${id}`);
   const userInfo = {
    firstName: ctx.from.first_name,
    lastName: ctx.from.last_name

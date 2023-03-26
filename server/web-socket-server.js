@@ -5,14 +5,17 @@ const cors = require('cors');
 const events = require('events');
 const path = require('path');
 const setTelegramWebhook = require('./telegram_bot');
-
-const emitter = new events.EventEmitter();
+const http = require('http');
+const setupWebSocket = require('./websocket');
 
 const app = express();
+const server = http.createServer(app);
+setupWebSocket(server);
+const emitter = new events.EventEmitter();
+
 app.use(cors());
 app.use(bodyParser.json());
 setTelegramWebhook(app, emitter);
-require('./websocket');
 
 app.use(express.static(path.join(__dirname, '../public/dist')));
 
@@ -24,7 +27,7 @@ app.get('/login', (req, res) => {
   });
  }
  const eventName = `login-${id}`;
- console.log(`Wait on login id:${id} event:<${eventName}>`);
+ console.log(`Wait on login id:${id}`);
  emitter.once(eventName, (userInfo) => {
   res.status(200).send(userInfo);
  });
