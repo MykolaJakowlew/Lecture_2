@@ -3,11 +3,14 @@ import axios from 'axios';
 import './style.css';
 import './loader.css';
 import { v4 as uuid } from 'uuid';
+import like from './images/like.png';
+import selectedLike from './images/like_selected.png';
 
 let SOCKET_BASE_URL = process.env.SOCKET_BASE_URL;
 
 const WebSocketChat = () => {
-  const [userName, setUserName] = useState('');
+  const userNameStorage = localStorage.getItem('userName');
+  const [userName, setUserName] = useState(userNameStorage || '');
   const [messages, setMessages] = useState([]);
   const [value, setValue] = useState("");
   const [showLogin, setShowLogin] = useState(true);
@@ -34,27 +37,54 @@ const WebSocketChat = () => {
     socket.current.onopen = () => {
       console.log(`WebSocket connection was created with:${SOCKET_BASE_URL}`);
       setConnected(true);
+      const message = {
+        event: 'first-connect',
+        messageId: uuid(),
+        userName,
+        date: Date.now()
+      };
+      socket.current.send(JSON.stringify(message));
     };
     socket.current.onclose = (event) => {
       console.log(`WebSocket connection was closed`, event);
       setConnected(false);
-      // setTimeout(() => {
-      //   console.log(`WebSocket connection retried`);
-      //   subscribe();
-      // }, 1000);
+      setTimeout(() => {
+        console.log(`WebSocket connection retried`);
+        subscribe();
+      }, 1000);
     };
     socket.current.onerror = (error) => {
       console.log(`WebSocket connection has error`, error);
     };
 
     socket.current.onmessage = (event) => {
-      const message = event.data.toString();
-      console.log(`WebSocket connection has message:${message}`);
-      setMessages((prev) => [...prev, JSON.parse(message)]);
+      const messageString = event.data.toString();
+      console.log(`WebSocket connection has message:${messageString}`);
+      const message = JSON.parse(messageString);
+      switch (message.event) {
+        case 'message':
+          setMessages((prev) => [...prev, message]);
+          break;
+        case 'emoji':
+          setMessages((prev) => {
+            const current = prev.find(e => e.messageId == message.selectedMessageId);
+            if (!current) {
+              return prev;
+            }
+            if (!current.likes) {
+              current.likes = { positive: 0, negative: 0 };
+            }
+            if (message.data == 'like') {
+              current.likes.positive += 1;
+            } else {
+              current.likes.negative += 1;
+            }
+            return [...prev];
+          });
+      }
     };
   };
   useEffect(() => {
-    const userName = localStorage.getItem('userName');
     if (userName) {
       setUserName(userName);
       setShowLogin(false);
@@ -67,6 +97,8 @@ const WebSocketChat = () => {
 
   const sendMessage = async () => {
     const message = {
+      event: 'message',
+      messageId: uuid(),
       userName,
       text: value,
       date: Date.now()
@@ -93,11 +125,11 @@ const WebSocketChat = () => {
         </div>
         <div className="messages">
           {messages.map(message => <div>
-            <div>
+            <div className="userInfo">
               <b>{message.userName}</b><br />
               <b style={{ fontSize: '10px' }}>{new Date(message.date).toISOString()}</b>
             </div>
-            <div>{message.text}</div>
+            <div className="message">{message.text}</div>
           </div>)}
         </div>
       </div>

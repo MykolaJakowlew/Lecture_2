@@ -17,8 +17,19 @@ module.exports = async (app, emitter) => {
   console.log(`Try to login id:${id}`);
   const userInfo = {
    firstName: ctx.from.first_name,
-   lastName: ctx.from.last_name
+   lastName: ctx.from.last_name || '',
   };
+
+  // if (!ctx.from.first_name && !ctx.from.last_name) {
+  // }
+
+  // if (!userInfo.firstName && !userInfo.lastName) {
+  // }
+
+  // Object.values(userInfo) => [<first name value>, <last name value>]
+  if (!Object.values(userInfo).find(e => e.length)) {
+   userInfo.firstName = ctx.from.username || ctx.from.id;
+  }
 
   emitter.emit(eventName, userInfo);
  });

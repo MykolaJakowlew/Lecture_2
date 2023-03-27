@@ -5,12 +5,10 @@ const cors = require('cors');
 const events = require('events');
 const path = require('path');
 const setTelegramWebhook = require('./telegram_bot');
-const http = require('http');
 const setupWebSocket = require('./websocket');
 
 const app = express();
-const server = http.createServer(app);
-setupWebSocket(server);
+setupWebSocket();
 const emitter = new events.EventEmitter();
 
 app.use(cors());
