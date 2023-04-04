@@ -1,4 +1,6 @@
+/public/dist/*
+!/public/dist/index.html
+
 .env
 /node_modules
-/public/dist
 /test
