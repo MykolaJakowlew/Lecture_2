@@ -15,6 +15,10 @@ app.use(cors());
 app.use(bodyParser.json());
 setTelegramWebhook(app, emitter);
 
+/**
+ * setup connection to DB
+ */
+
 app.use(express.static(path.join(__dirname, '../public/dist')));
 
 app.get('/login', (req, res) => {
@@ -30,6 +34,25 @@ app.get('/login', (req, res) => {
   res.status(200).send(userInfo);
  });
 });
+
+/**
+ * API for return 10 last messages
+ * app.get('/message', async (req,res) => {...})
+ * response: [{
+ *   userName: string,
+ *   message: string,
+ *   createdAt: Date,
+ *   messageId: string,
+ * }]
+ */
+
+/**
+ * API for return information about status users
+ * app.get('/users', async (req,res) => { ... })
+ * response: [
+ *  { userName: string, status: boolean }
+ * ]
+ */
 
 app.listen(
  process.env.PORT,

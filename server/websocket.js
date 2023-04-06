@@ -29,15 +29,18 @@ module.exports = () => {
       connectionCount += 1;
      }
     });
+    ws.userName = userName;
     if (connectionCount != 0) {
      return;
     }
     users[userName] = true;
-    ws.userName = userName;
     message.event = 'message';
     message.userName = 'system';
     message.text = `User with name ${userName} was connected to chat`;
    }
+   /**
+    * Code to save message in DB
+    */
    sendToAll(message);
   });
   ws.on('close', (reason) => {
@@ -51,16 +54,6 @@ module.exports = () => {
    if (isOnline) {
     return;
    }
-   // users.userName = "bla";
-   // {
-   //   userName: "bla"
-   // }
-
-   // userName = 'xyz';
-   // users[userName] = "bla";
-   // {
-   //   xyz: "bla"
-   // }
    users[ws.userName] = false;
    const message = {
     event: 'message',
