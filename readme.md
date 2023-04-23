@@ -8,3 +8,7 @@ RESPONSE:
  users: [{ userName: string, status: 'online' | 'offline' }]
 }
 ```
+
+## Setup integration tests
+
+1. npm i mongodb-memory-server
