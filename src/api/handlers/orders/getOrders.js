@@ -18,7 +18,7 @@ module.exports.getOrders = async (req, res) => {
 module.exports.getOrder = async (req, res) => {
  const { _id } = req.params;
 
- const order = await Orders.findOneById(_id);
+ const order = await Orders.findById(_id);
  if (!order) {
   return res.status(400).send({
    message: `Order with id:${_id} was not found`
@@ -28,7 +28,9 @@ module.exports.getOrder = async (req, res) => {
  return res.status(200).send({
   ...order.toObject(),
   totalPrice: order.dishes.reduce((acc, cur) => {
-   return acc + cur.quantity * cur.price;
+   return acc + cur.quantity > 4
+    ? (cur.quantity * cur.price) - 5
+    : cur.quantity * cur.price;
   }, 0)
  });
 };

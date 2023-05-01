@@ -24,6 +24,10 @@ const bootstrap = async () => {
  app.use(API.router);
 
  app.listen(process.env.PORT, () => console.log(`Server was started on ${process.env.PORT}`));
+
+ return app;
 };
 
-bootstrap();
+// bootstrap();
+
+module.exports = bootstrap();
