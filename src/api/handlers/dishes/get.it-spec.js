@@ -11,7 +11,7 @@ describe("getDishes", () => {
    }
   });
   console.log(`mongoose was connected`);
-
+  await Dishes.deleteMany();
   await Dishes.insertMany([
    { price: 45, isAvailable: true },
    { price: 56, isAvailable: false },

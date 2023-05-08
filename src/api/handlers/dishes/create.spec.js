@@ -27,7 +27,7 @@ describe("createDish", () => {
     });
 
     it("is not use ", async () => {
-      const req = { body: { price: 23, isAvailable: false } };
+      const req = { body: { price: 23, isAvailable: true } };
       const spyOn = jest.spyOn(Models, 'Dishes');
       await createDish(req, res);
       expect(spyOn.mock.calls[0])

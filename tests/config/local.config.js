@@ -16,7 +16,7 @@ module.exports = {
   },
   {
    ...e2eConfig,
-   rootDir: './tests'
+   rootDir: './tests',
   }
  ]
 };

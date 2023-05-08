@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test:coverage": "jest --coverage --config=./tests/config/coverage.config.js",
     "build": "cd public/ && npm run build",
     "start:long-polling": "node server/long-polling.js",
     "start:event-source": "node server/event-source.js",
@@ -43,5 +44,15 @@
     "supertest": "^6.3.3",
     "webpack": "^5.75.0",
     "webpack-dev-server": "^4.11.1"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "./src/**/*.js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "./src/models",
+      "./src/setup/mongoose.js"
+    ]
   }
 }
