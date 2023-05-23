@@ -6,9 +6,7 @@
   "scripts": {
     "test:coverage": "jest --coverage --config=./tests/config/coverage.config.js",
     "build": "cd public/ && npm run build",
-    "start:long-polling": "node server/long-polling.js",
-    "start:event-source": "node server/event-source.js",
-    "start:web-socket": "node server/web-socket-server.js"
+    "start": "node src/index.js"
   },
   "author": "",
   "license": "ISC",

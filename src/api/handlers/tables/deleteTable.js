@@ -4,7 +4,7 @@ const { Tables } = require('../../../models');
 module.exports.deleteTable = async (req, res) => {
   const { _id } = req.params;
 
-  const table = await Tables.findById(_id);
+  const table = await Tables.findOne({ _id: new mongoose.Types.ObjectId(_id) });
   if (!table) {
     return res.status(400)
       .send({ message: `Table with _id ${_id} was not found` });

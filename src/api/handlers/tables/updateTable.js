@@ -13,7 +13,7 @@ const { Tables, Waiters } = require('../../../models');
 module.exports.updateTable = async (req, res) => {
  const { _id } = req.params;
  const { orderId, waiterId } = req.body;
-
+ // != 
  if (![orderId, waiterId].find(e => e !== undefined)) {
   return res.status(400).send({
    message: 'Body is empty'
@@ -21,7 +21,7 @@ module.exports.updateTable = async (req, res) => {
  }
 
  if (waiterId) {
-  const waiter = await Waiters.findById(waiterId);
+  const waiter = await Waiters.findOne({ _id: new mongoose.Types.ObjectId(waiterId) });
   if (!waiter) {
    return res.status(400).send({
     message: `Waiter by id ${waiterId} was not found`
